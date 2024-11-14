@@ -13,6 +13,9 @@
         android:theme="@style/Theme.LearnCompose"
         tools:targetApi="31">
         <activity
+            android:name=".BMainActivity"
+            android:exported="false" />
+        <activity
             android:name=".AMainActivity"
             android:exported="false" />
         <activity
@@ -26,6 +29,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.example.mvi.CounterActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
