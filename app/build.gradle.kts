@@ -67,4 +67,15 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+     implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    // Gson Converter (用于将 JSON 转换为 Kotlin 对象)
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Kotlin Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1") // 使用您项目兼容的最新版本
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1") // 使用您项目兼容的最新版本
+
+    // Coroutine Lifecycle Scopes (方便在 Activity/Fragment 中使用 Coroutines)
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2") // 使用您项目兼容的最新版本
 }
