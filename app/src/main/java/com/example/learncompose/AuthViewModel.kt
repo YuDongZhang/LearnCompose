@@ -33,6 +33,13 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _navigateToMain = MutableStateFlow(false)
     val navigateToMain: StateFlow<Boolean> = _navigateToMain.asStateFlow()
 
+    init {
+        // Load saved credentials when the ViewModel is initialized
+        val sharedPreferences = getApplication<Application>().getSharedPreferences("auth_prefs", Application.MODE_PRIVATE)
+        _account.value = sharedPreferences.getString("saved_account", "") ?: ""
+        _password.value = sharedPreferences.getString("saved_password", "") ?: ""
+    }
+
     fun onAccountChange(newAccount: String) {
         _account.value = newAccount
     }
@@ -109,6 +116,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     with(sharedPreferences.edit()) {
                         putString("auth_token", response.result.token)
                         putString("user_id", response.result.userId)
+                        putString("saved_account", _account.value)
+                        putString("saved_password", _password.value)
                         apply()
                     }
                     Log.d("AuthViewModel", "Logged in token: ${response.result.token}")

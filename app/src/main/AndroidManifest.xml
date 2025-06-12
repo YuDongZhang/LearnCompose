@@ -68,6 +68,11 @@
         <activity
             android:name="com.example.mvi.CounterActivity"
             android:exported="false" />
+
+
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

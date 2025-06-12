@@ -6,6 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
 import retrofit2.http.Query
+import retrofit2.http.Header
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -27,6 +28,9 @@ interface ApiService {
 
     @POST("api/login")
     suspend fun login(@Body request: LoginRequest): LoginResponse
+
+    @GET("api/getUserInfo")
+    suspend fun getUserInfo(@Header("token") token: String): GetUserInfoResponse
 
 }
 

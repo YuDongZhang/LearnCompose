@@ -40,4 +40,26 @@ data class LoginResponseResult(
     // Add other user-related data you might receive upon successful login
 )
 
-typealias LoginResponse = ApiResponse<LoginResponseResult> 
+typealias LoginResponse = ApiResponse<LoginResponseResult>
+
+// Response for getting user info
+data class UserInfoResult(
+    val birthday: String?,
+    val blurb: String?,
+    val head_url: String?,
+    val name: String?,
+    val updatedAt: String?
+)
+
+typealias GetUserInfoResponse = ApiResponse<UserInfoResult>
+
+//// Response for Get User Info API
+//data class GetUserInfoResponseResult(
+//    val birthday: String,
+//    val blurb: String,
+//    @SerializedName("head_url") val headUrl: String,
+//    val name: String,
+//    val updatedAt: String
+//)
+//
+//typealias GetUserInfoResponse = ApiResponse<GetUserInfoResponseResult>

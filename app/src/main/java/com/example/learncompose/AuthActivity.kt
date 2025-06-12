@@ -20,6 +20,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import android.content.Intent
 import androidx.compose.ui.platform.LocalContext
+import android.app.Application
+import android.util.Log
 
 class AuthActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +46,7 @@ fun AuthScreen(authViewModel: AuthViewModel = viewModel()) {
 
     LaunchedEffect(navigateToMain) {
         if (navigateToMain) {
-            context.startActivity(Intent(context, CMainActivity::class.java))
+            context.startActivity(Intent(context, HomeActivity::class.java))
             authViewModel.resetNavigation()
             (context as? ComponentActivity)?.finish()
         }
