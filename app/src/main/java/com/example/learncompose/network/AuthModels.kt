@@ -75,13 +75,41 @@ data class PublishDynamicResponseResult(
 
 typealias PublishDynamicResponse = ApiResponse<PublishDynamicResponseResult>
 
-//// Response for Get User Info API
-//data class GetUserInfoResponseResult(
-//    val birthday: String,
-//    val blurb: String,
-//    @SerializedName("head_url") val headUrl: String,
-//    val name: String,
-//    val updatedAt: String
-//)
-//
-//typealias GetUserInfoResponse = ApiResponse<GetUserInfoResponseResult>
+// Response for Get Person Dynamic List API
+data class GetPersonDynamicListResponse(
+    val code: Int,
+    val message: String,
+    val result: GetPersonDynamicListResult?
+)
+
+data class GetPersonDynamicListResult(
+    val total: Int,
+    val list: List<DynamicItem>?
+)
+
+data class DynamicItem(
+    val createdAt: String?,
+    val deletedAt: String?,
+    val id: Int,
+    val images: List<DynamicImage>?,
+    val text: String?,
+    val updatedAt: String?,
+    val userInfo: DynamicUserInfo?
+)
+
+data class DynamicImage(
+    val createdAt: String?,
+    val deletedAt: String?,
+    val id: Int,
+    val updatedAt: String?,
+    val url: String?
+)
+
+data class DynamicUserInfo(
+    val birthday: String?,
+    val blurb: String?,
+    val head_url: String?,
+    val name: String?,
+    val updatedAt: String?
+)
+

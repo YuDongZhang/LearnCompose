@@ -42,6 +42,13 @@ interface ApiService {
     @POST("api/publishDynamic")
     suspend fun publishDynamic(@Header("token") token: String, @Body request: PublishDynamicRequest): PublishDynamicResponse
 
+    @GET("api/getPersonDynamicList")
+    suspend fun getPersonDynamicList(
+        @Query("page") page: Int,
+        @Query("size") size: Int,
+        @Header("token") token: String
+    ): GetPersonDynamicListResponse
+
 }
 
 // 创建 Retrofit 实例的单例对象

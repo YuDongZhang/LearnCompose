@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.learncompose.network.DynamicItem
 import com.example.learncompose.network.PublishDynamicRequest
 import com.example.learncompose.network.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,23 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
 
     private val _message = MutableStateFlow("")
     val message: StateFlow<String> = _message.asStateFlow()
+
+    // Dynamic list states
+    private val _dynamicList = MutableStateFlow<List<DynamicItem>>(emptyList())
+    val dynamicList: StateFlow<List<DynamicItem>> = _dynamicList.asStateFlow()
+
+    private val _isListLoading = MutableStateFlow(false)
+    val isListLoading: StateFlow<Boolean> = _isListLoading.asStateFlow()
+
+    private val _canLoadMoreList = MutableStateFlow(true)
+    val canLoadMoreList: StateFlow<Boolean> = _canLoadMoreList.asStateFlow()
+
+    private var currentPageList = 0
+    private val pageSizeList = 5 // Define page size for dynamic list
+
+    init {
+        fetchDynamicList()
+    }
 
     fun onImageSelected(uri: Uri) {
         _selectedImageUris.value = _selectedImageUris.value + uri
@@ -63,7 +81,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                         val multipartBodyPart = MultipartBody.Part.createFormData("file", "image.jpg", requestBody)
                         val uploadResponse = RetrofitClient.apiService.uploadFile(multipartBodyPart)
                         if (uploadResponse.code == 200 && uploadResponse.result != null) {
-                            val imageUrl = RetrofitClient.BASE_URL + uploadResponse.result.name
+                            val imageUrl = RetrofitClient.BASE_URL + uploadResponse.result.name.replaceFirst("/api/", "")
                             uploadedImageUrls.add(imageUrl)
                         } else {
                             _message.value = uploadResponse.message ?: "Image upload failed."
@@ -88,6 +106,8 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                     _message.value = publishResponse.message ?: "Dynamic post published successfully!"
                     _selectedImageUris.value = emptyList() // Clear images after successful post
                     _postText.value = "" // Clear text after successful post
+                    currentPageList = 0 // Reset page to refresh list after publishing
+                    fetchDynamicList(isRefresh = true) // Refresh dynamic list
                 } else {
                     _message.value = publishResponse.message ?: "Failed to publish dynamic post."
                 }
@@ -96,6 +116,54 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                 _message.value = "Network error: ${e.localizedMessage}"
             } finally {
                 _isLoading.value = false
+            }
+        }
+    }
+
+    fun fetchDynamicList(isRefresh: Boolean = false) {
+        if (_isListLoading.value && !isRefresh) return
+
+        viewModelScope.launch {
+            _isListLoading.value = true
+            try {
+                val sharedPreferences = getApplication<Application>().getSharedPreferences("auth_prefs", Application.MODE_PRIVATE)
+                val token = sharedPreferences.getString("auth_token", null)
+
+                if (token.isNullOrEmpty()) {
+                    _message.value = "Authentication token not found. Please log in again."
+                    _isListLoading.value = false
+                    return@launch
+                }
+
+                if (isRefresh) {
+                    currentPageList = 0
+                }
+
+                val response = RetrofitClient.apiService.getPersonDynamicList(page = currentPageList, size = pageSizeList, token = token)
+                if (response.code == 200 && response.result != null) {
+                    val newItems = response.result.list // Access the list from the result object
+                    if (newItems != null) {
+                        if (isRefresh) {
+                            _dynamicList.value = newItems
+                        } else {
+                            _dynamicList.value = _dynamicList.value + newItems
+                        }
+                        currentPageList++
+                        _canLoadMoreList.value = newItems.size == pageSizeList
+                    } else {
+                        _message.value = response.message ?: "Failed to fetch dynamic list: Result list is null."
+                        _canLoadMoreList.value = false
+                    }
+                } else {
+                    _message.value = response.message ?: "Failed to fetch dynamic list."
+                    _canLoadMoreList.value = false
+                }
+            } catch (e: Exception) {
+                Log.e("ActivityViewModel", "Error fetching dynamic list", e)
+                _message.value = "Network error: ${e.localizedMessage}"
+                _canLoadMoreList.value = false
+            } finally {
+                _isListLoading.value = false
             }
         }
     }

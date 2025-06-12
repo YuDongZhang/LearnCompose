@@ -17,6 +17,7 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,6 +25,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
@@ -75,6 +77,14 @@ import java.io.FileOutputStream
 import java.util.Objects
 import java.util.UUID
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+
+import androidx.compose.material3.Card
+import androidx.compose.runtime.snapshotFlow
+import com.example.learncompose.network.DynamicItem
 
 sealed class Screen(val route: String, val label: String) {
     object Home : Screen("home", "主页")
@@ -245,6 +255,44 @@ fun ActivityScreen(viewModel: ActivityViewModel = viewModel()) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = message)
+
+            // Dynamic list display
+            val dynamicList by viewModel.dynamicList.collectAsState()
+            val isListLoading by viewModel.isListLoading.collectAsState()
+            val canLoadMoreList by viewModel.canLoadMoreList.collectAsState()
+            val listState = rememberLazyListState() // New state for dynamic list
+
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = "动态列表", style = MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.height(8.dp))
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(8.dp)
+            ) {
+                items(dynamicList) { dynamicItem ->
+                    DynamicListItem(dynamicItem = dynamicItem)
+                }
+
+                if (isListLoading && canLoadMoreList) {
+                    item {
+                        Box(modifier = Modifier.fillMaxWidth().padding(16.dp), contentAlignment = Alignment.Center) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
+            }
+
+            // Load More scroll listener for dynamic list
+            LaunchedEffect(listState) {
+                snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
+                    .collect { index ->
+                        if (index != null && index >= dynamicList.size - 1 && !isListLoading && canLoadMoreList) {
+                            viewModel.fetchDynamicList()
+                        }
+                    }
+            }
         }
     }
 
@@ -284,7 +332,6 @@ fun ActivityScreen(viewModel: ActivityViewModel = viewModel()) {
     }
 }
 
-
 // Helper function to save bitmap to a temporary URI
 private fun saveBitmapToTempUri(context: Context, bitmap: Bitmap): Uri? {
     val filesDir = context.cacheDir
@@ -302,8 +349,61 @@ private fun saveBitmapToTempUri(context: Context, bitmap: Bitmap): Uri? {
 }
 
 @Composable
-fun ActivityScreen() {
-    Text(text = "动态内容", modifier = Modifier.fillMaxSize())
+fun DynamicListItem(dynamicItem: DynamicItem) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+    ) {
+        Column(modifier = Modifier.padding(8.dp)) {
+            dynamicItem.userInfo?.let { userInfo ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = rememberAsyncImagePainter(model = userInfo.head_url),
+                        contentDescription = "User Avatar",
+                        modifier = Modifier.size(40.dp),
+                        contentScale = ContentScale.Crop
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(text = userInfo.name ?: "Unknown User", style = MaterialTheme.typography.titleSmall)
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            dynamicItem.images?.let { images ->
+                if (images.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp)
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        images.forEach { dynamicImage ->
+                            Image(
+                                painter = rememberAsyncImagePainter(model = dynamicImage.url),
+                                contentDescription = null,
+                                modifier = Modifier.size(180.dp),
+                                contentScale = ContentScale.Crop
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+
+            dynamicItem.text?.let { text ->
+                if (text.isNotBlank()) {
+                    Text(text = text, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+            }
+
+            dynamicItem.createdAt?.let { createdAt ->
+                Text(text = "Posted: $createdAt", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+    }
 }
 
 @Composable
