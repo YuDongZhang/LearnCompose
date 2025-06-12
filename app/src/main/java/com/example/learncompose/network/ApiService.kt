@@ -7,6 +7,9 @@ import retrofit2.http.POST
 import retrofit2.http.Body
 import retrofit2.http.Query
 import retrofit2.http.Header
+import retrofit2.http.Multipart
+import retrofit2.http.Part
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
@@ -32,11 +35,18 @@ interface ApiService {
     @GET("api/getUserInfo")
     suspend fun getUserInfo(@Header("token") token: String): GetUserInfoResponse
 
+    @Multipart
+    @POST("api/uploadFile")
+    suspend fun uploadFile(@Part file: MultipartBody.Part): UploadFileResponse
+
+    @POST("api/publishDynamic")
+    suspend fun publishDynamic(@Header("token") token: String, @Body request: PublishDynamicRequest): PublishDynamicResponse
+
 }
 
 // 创建 Retrofit 实例的单例对象
 object RetrofitClient {
-    private const val BASE_URL = "https://api.apiopen.top/"
+    public const val BASE_URL = "https://api.apiopen.top/"
 
     val apiService: ApiService by lazy {
         val loggingInterceptor = HttpLoggingInterceptor().apply {

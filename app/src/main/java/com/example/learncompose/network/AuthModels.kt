@@ -53,6 +53,28 @@ data class UserInfoResult(
 
 typealias GetUserInfoResponse = ApiResponse<UserInfoResult>
 
+// Response for Upload File API
+data class UploadFileResponseResult(
+    val size: Long,
+    val name: String
+)
+
+typealias UploadFileResponse = ApiResponse<UploadFileResponseResult>
+
+// Request body for publishing dynamic content
+data class PublishDynamicRequest(
+    val images: List<String>,
+    val text: String
+)
+
+// Response for publishing dynamic content
+data class PublishDynamicResponseResult(
+    val images: List<String>,
+    val text: String
+)
+
+typealias PublishDynamicResponse = ApiResponse<PublishDynamicResponseResult>
+
 //// Response for Get User Info API
 //data class GetUserInfoResponseResult(
 //    val birthday: String,
