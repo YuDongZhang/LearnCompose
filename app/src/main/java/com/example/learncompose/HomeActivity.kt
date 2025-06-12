@@ -254,6 +254,15 @@ fun ActivityScreen(viewModel: ActivityViewModel = viewModel()) {
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { viewModel.deleteAllDynamics() },
+                enabled = !isLoading,
+                modifier = Modifier.fillMaxWidth(),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("删除所有动态")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
             Text(text = message)
 
             // Dynamic list display

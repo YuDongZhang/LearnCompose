@@ -192,4 +192,39 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
     fun removeImage(uri: Uri) {
         _selectedImageUris.value = _selectedImageUris.value.filter { it != uri }
     }
+
+    fun deleteAllDynamics() {
+        viewModelScope.launch {
+            _isLoading.value = true
+            _message.value = ""
+            try {
+                val sharedPreferences = getApplication<Application>().getSharedPreferences("auth_prefs", Application.MODE_PRIVATE)
+                val token = sharedPreferences.getString("auth_token", null)
+                var userId = sharedPreferences.getString("user_id", null) // Assuming you store userId here
+
+
+                if (token.isNullOrEmpty() || userId.isNullOrEmpty()) {
+                    _message.value = "Authentication token or user ID not found. Please log in again."
+                    _isLoading.value = false
+                    return@launch
+                }
+
+                val requestBody = mapOf("id" to userId)
+                val response = RetrofitClient.apiService.delPersonDynamicList(token = token, request = requestBody)
+
+                if (response.code == 200) {
+                    _message.value = response.message ?: "All dynamic posts deleted successfully!"
+                    currentPageList = 0 // Reset page to refresh list
+                    fetchDynamicList(isRefresh = true) // Refresh the list after deletion
+                } else {
+                    _message.value = response.message ?: "Failed to delete dynamic posts."
+                }
+            } catch (e: Exception) {
+                Log.e("ActivityViewModel", "Error deleting dynamic posts", e)
+                _message.value = "Network error: ${e.localizedMessage}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
+    }
 } 

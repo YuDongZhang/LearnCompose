@@ -49,6 +49,12 @@ interface ApiService {
         @Header("token") token: String
     ): GetPersonDynamicListResponse
 
+    @POST("api/delPersonDynamicList")
+    suspend fun delPersonDynamicList(
+        @Header("token") token: String,
+        @Body request: Map<String, String>
+    ): ApiResponse<String>
+
 }
 
 // 创建 Retrofit 实例的单例对象
