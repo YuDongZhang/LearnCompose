@@ -18,6 +18,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.learncompose.ui.theme.LearnComposeTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import android.content.Intent
+import androidx.compose.ui.platform.LocalContext
 
 class AuthActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,16 @@ fun AuthScreen(authViewModel: AuthViewModel = viewModel()) {
     val verificationCode by authViewModel.verificationCode.collectAsState()
     val isLoading by authViewModel.isLoading.collectAsState()
     val message by authViewModel.message.collectAsState()
+    val navigateToMain by authViewModel.navigateToMain.collectAsState()
+    val context = LocalContext.current
+
+    LaunchedEffect(navigateToMain) {
+        if (navigateToMain) {
+            context.startActivity(Intent(context, CMainActivity::class.java))
+            authViewModel.resetNavigation()
+            (context as? ComponentActivity)?.finish()
+        }
+    }
 
     Column(
         modifier = Modifier

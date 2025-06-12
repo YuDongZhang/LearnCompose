@@ -1,6 +1,7 @@
 package com.example.learncompose
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,7 @@ import com.example.learncompose.network.SendVerificationCodeRequest
 import com.example.learncompose.network.RegisterRequest
 import com.example.learncompose.network.LoginRequest
 
-class AuthViewModel : ViewModel() {
+class AuthViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _account = MutableStateFlow("")
     val account: StateFlow<String> = _account.asStateFlow()
@@ -28,6 +29,9 @@ class AuthViewModel : ViewModel() {
 
     private val _message = MutableStateFlow("")
     val message: StateFlow<String> = _message.asStateFlow()
+
+    private val _navigateToMain = MutableStateFlow(false)
+    val navigateToMain: StateFlow<Boolean> = _navigateToMain.asStateFlow()
 
     fun onAccountChange(newAccount: String) {
         _account.value = newAccount
@@ -100,8 +104,15 @@ class AuthViewModel : ViewModel() {
                 val response = RetrofitClient.apiService.login(request)
                 if (response.code == 200 && response.result != null) {
                     _message.value = response.message ?: "Login successful!"
-                    // TODO: Handle successful login (e.g., save token, navigate to main screen)
+                    // Save token and navigate
+                    val sharedPreferences = getApplication<Application>().getSharedPreferences("auth_prefs", Application.MODE_PRIVATE)
+                    with(sharedPreferences.edit()) {
+                        putString("auth_token", response.result.token)
+                        putString("user_id", response.result.userId)
+                        apply()
+                    }
                     Log.d("AuthViewModel", "Logged in token: ${response.result.token}")
+                    _navigateToMain.value = true
                 } else {
                     _message.value = response.message ?: "Login failed."
                 }
@@ -116,5 +127,9 @@ class AuthViewModel : ViewModel() {
 
     fun clearMessage() {
         _message.value = ""
+    }
+
+    fun resetNavigation() {
+        _navigateToMain.value = false
     }
 } 
