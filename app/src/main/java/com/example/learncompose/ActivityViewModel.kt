@@ -78,7 +78,7 @@ class ActivityViewModel(application: Application) : AndroidViewModel(application
                     val compressedImageBytes = compressImage(uri) // Compress image
                     if (compressedImageBytes != null) {
                         val requestBody = compressedImageBytes.toRequestBody("image/jpeg".toMediaTypeOrNull())
-                        val multipartBodyPart = MultipartBody.Part.createFormData("file", "image.jpg", requestBody)
+                        val multipartBodyPart = MultipartBody.Part.createFormData("file", "${java.util.UUID.randomUUID()}.jpg", requestBody)
                         val uploadResponse = RetrofitClient.apiService.uploadFile(multipartBodyPart)
                         if (uploadResponse.code == 200 && uploadResponse.result != null) {
                             val imageUrl = RetrofitClient.BASE_URL + uploadResponse.result.name.replaceFirst("/api/", "")
