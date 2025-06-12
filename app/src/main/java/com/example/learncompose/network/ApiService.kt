@@ -6,6 +6,9 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Body
 import retrofit2.http.Query
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import java.util.concurrent.TimeUnit
 
 // 定义 API 接口
 interface ApiService {
@@ -32,8 +35,20 @@ object RetrofitClient {
     private const val BASE_URL = "https://api.apiopen.top/"
 
     val apiService: ApiService by lazy {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            setLevel(HttpLoggingInterceptor.Level.BODY)
+        }
+
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(loggingInterceptor)
+            .connectTimeout(30, TimeUnit.SECONDS) // Optional: Set connection timeout
+            .readTimeout(30, TimeUnit.SECONDS)    // Optional: Set read timeout
+            .writeTimeout(30, TimeUnit.SECONDS)   // Optional: Set write timeout
+            .build()
+
         Retrofit.Builder()
             .baseUrl(BASE_URL)
+            .client(okHttpClient) // Set the custom OkHttpClient
             .addConverterFactory(GsonConverterFactory.create()) // 添加 Gson Converter
             .build()
             .create(ApiService::class.java) // 创建 ApiService 的实现

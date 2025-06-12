@@ -76,6 +76,7 @@ dependencies {
      implementation("com.squareup.retrofit2:retrofit:2.9.0")
     // Gson Converter (用于将 JSON 转换为 Kotlin 对象)
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
     // Kotlin Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.1") // 使用您项目兼容的最新版本
