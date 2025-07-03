@@ -87,6 +87,7 @@ import androidx.compose.runtime.snapshotFlow
 import com.example.learncompose.network.DynamicItem
 
 sealed class Screen(val route: String, val label: String) {
+
     object Home : Screen("home", "主页")
     object Activity : Screen("activity", "动态")
     object Profile : Screen("profile", "个人")
@@ -423,7 +424,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = viewModel()) {
 
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp), contentAlignment = Alignment.Center) {
+        .padding(16.dp), contentAlignment = Alignment.TopStart) {
         if (isLoading) {
             CircularProgressIndicator()
         } else if (errorMessage != null) {
