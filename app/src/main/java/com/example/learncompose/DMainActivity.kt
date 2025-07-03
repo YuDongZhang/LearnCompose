@@ -1,6 +1,7 @@
 package com.example.learncompose
 
 import android.os.Bundle
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -41,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -58,6 +60,7 @@ sealed class ComposeTopic(val title: String) {
     object StateView : ComposeTopic("State - 状态管理")
     object TextFieldView : ComposeTopic("TextField - 输入框")
     object ImageView : ComposeTopic("Image - 图像")
+    object Architecture : ComposeTopic("UI Architecture - 架构")
 }
 
 class DMainActivity : ComponentActivity() {
@@ -100,8 +103,12 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
         ComposeTopic.LayoutView,
         ComposeTopic.StateView,
         ComposeTopic.TextFieldView,
-        ComposeTopic.ImageView
+        ComposeTopic.ImageView,
+        ComposeTopic.Architecture
     )
+
+    // LocalContext.current 用于获取当前的 Context，这在需要启动 Activity 或访问系统服务时非常有用
+    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -124,7 +131,13 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
         ) {
             items(topics) { topic ->
                 Button(
-                    onClick = { onTopicClick(topic) },
+                    onClick = {
+                        if (topic is ComposeTopic.Architecture) {
+                            context.startActivity(Intent(context, ArchitectureActivity::class.java))
+                        } else {
+                            onTopicClick(topic)
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(topic.title, fontSize = 16.sp)
@@ -168,7 +181,7 @@ fun DetailScreen(topic: ComposeTopic, onBack: () -> Unit) {
                 is ComposeTopic.StateView -> StateExampleScreen()
                 is ComposeTopic.TextFieldView -> TextFieldExampleScreen()
                 is ComposeTopic.ImageView -> ImageExampleScreen()
-                else -> {} // Home screen is handled separately
+                else -> {} // Home 和 Architecture screen 在此不处理
             }
         }
     }
