@@ -61,6 +61,7 @@ sealed class ComposeTopic(val title: String) {
     object TextFieldView : ComposeTopic("TextField - 输入框")
     object ImageView : ComposeTopic("Image - 图像")
     object Architecture : ComposeTopic("UI Architecture - 架构")
+    object LayoutsBasics : ComposeTopic("Layouts - 基础")
 }
 
 class DMainActivity : ComponentActivity() {
@@ -104,7 +105,8 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
         ComposeTopic.StateView,
         ComposeTopic.TextFieldView,
         ComposeTopic.ImageView,
-        ComposeTopic.Architecture
+        ComposeTopic.Architecture,
+        ComposeTopic.LayoutsBasics
     )
 
     // LocalContext.current 用于获取当前的 Context，这在需要启动 Activity 或访问系统服务时非常有用
@@ -134,6 +136,8 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
                     onClick = {
                         if (topic is ComposeTopic.Architecture) {
                             context.startActivity(Intent(context, ArchitectureActivity::class.java))
+                        } else if (topic is ComposeTopic.LayoutsBasics) {
+                            context.startActivity(Intent(context, LayoutsBasicsActivity::class.java))
                         } else {
                             onTopicClick(topic)
                         }
@@ -181,7 +185,7 @@ fun DetailScreen(topic: ComposeTopic, onBack: () -> Unit) {
                 is ComposeTopic.StateView -> StateExampleScreen()
                 is ComposeTopic.TextFieldView -> TextFieldExampleScreen()
                 is ComposeTopic.ImageView -> ImageExampleScreen()
-                else -> {} // Home 和 Architecture screen 在此不处理
+                else -> {} // Home, Architecture, LayoutsBasics screen 在此不处理
             }
         }
     }

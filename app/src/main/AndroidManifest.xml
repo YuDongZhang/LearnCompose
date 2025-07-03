@@ -7,11 +7,11 @@
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -27,8 +27,7 @@
         <activity
             android:name=".CMainActivity"
             android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            >
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
             <!-- Removed intent-filter from CMainActivity -->
         </activity>
         <activity
@@ -37,11 +36,11 @@
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"> <!-- 为 BMainActivity 指定一个 AppCompat 主题 -->
 
             <!-- 将启动 intent-filter 移动到这里 -->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
 
         <activity
@@ -49,10 +48,10 @@
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.LearnCompose">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
 
         <activity
@@ -86,8 +85,7 @@
         <activity
             android:name=".DMainActivity"
             android:exported="true"
-            android:theme="@style/Theme.AppCompat.DayNight"
-            >
+            android:theme="@style/Theme.AppCompat.DayNight">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -95,10 +93,16 @@
         </activity>
 
         <activity
-    android:name=".ArchitectureActivity"
-    android:exported="false"
-    android:label="UI Architecture"
-    android:theme="@style/Theme.LearnCompose" />
+            android:name=".ArchitectureActivity"
+            android:exported="false"
+            android:label="UI Architecture"
+            android:theme="@style/Theme.LearnCompose" />
+
+        <activity
+            android:name=".LayoutsBasicsActivity"
+            android:exported="false"
+            android:label="UI Architecture"
+            android:theme="@style/Theme.LearnCompose" />
 
 
     </application>

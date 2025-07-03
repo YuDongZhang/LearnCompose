@@ -88,4 +88,7 @@ dependencies {
 
     // Coroutine Lifecycle Scopes (方便在 Activity/Fragment 中使用 Coroutines)
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2") // 使用您项目兼容的最新版本
+
+    implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
+
 }
