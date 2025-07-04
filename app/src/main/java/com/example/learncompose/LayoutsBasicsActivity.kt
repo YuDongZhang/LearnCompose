@@ -69,6 +69,7 @@ sealed class LayoutTopic(val title: String, val description: String) {
     object CustomLayouts : LayoutTopic("自定义布局", "学习如何创建自己的自定义布局。")
     object CustomModifiers : LayoutTopic("自定义修饰符", "学习如何创建自己的修饰符以封装重用逻辑。")
     object Pager : LayoutTopic("Pager", "实现可滑动的屏幕或项目轮播。")
+    object AdaptiveLayouts : LayoutTopic("自适应布局", "根据可用空间动态改变布局。")
 
 }
 
@@ -113,7 +114,8 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
         LayoutTopic.ConstraintLayout,
         LayoutTopic.CustomLayouts,
         LayoutTopic.CustomModifiers,
-        LayoutTopic.Pager
+        LayoutTopic.Pager,
+        LayoutTopic.AdaptiveLayouts
     )
 
     Scaffold(
@@ -180,6 +182,7 @@ fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
                     is LayoutTopic.ConstraintLayout -> ConstraintLayoutExample()
                     is LayoutTopic.CustomLayouts -> CustomLayoutsExample()
                     is LayoutTopic.Pager -> PagerExamples()
+                    is LayoutTopic.AdaptiveLayouts -> AdaptiveLayoutsExample()
                     else -> {}
                 }
             }
