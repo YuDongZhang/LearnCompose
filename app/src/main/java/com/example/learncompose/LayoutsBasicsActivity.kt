@@ -1,7 +1,6 @@
 package com.example.learncompose
 
 import android.os.Bundle
-
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -69,7 +69,6 @@ sealed class LayoutTopic(val title: String, val description: String) {
     object CustomLayouts : LayoutTopic("自定义布局", "学习如何创建自己的自定义布局。")
     object CustomModifiers : LayoutTopic("自定义修饰符", "学习如何创建自己的修饰符以封装重用逻辑。")
     object Pager : LayoutTopic("Pager", "实现可滑动的屏幕或项目轮播。")
-    object FlowLayouts : LayoutTopic("Flow Layouts", "使用 FlowRow 和 FlowColumn 实现流式布局。")
 
 }
 
@@ -114,8 +113,7 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
         LayoutTopic.ConstraintLayout,
         LayoutTopic.CustomLayouts,
         LayoutTopic.CustomModifiers,
-        LayoutTopic.Pager,
-        LayoutTopic.FlowLayouts
+        LayoutTopic.Pager
     )
 
     Scaffold(
@@ -149,7 +147,7 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
 }
 
 // 5. 详情屏幕
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
     Scaffold(
@@ -182,7 +180,6 @@ fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
                     is LayoutTopic.ConstraintLayout -> ConstraintLayoutExample()
                     is LayoutTopic.CustomLayouts -> CustomLayoutsExample()
                     is LayoutTopic.Pager -> PagerExamples()
-                    is LayoutTopic.FlowLayouts -> FlowLayoutsExample()
                     else -> {}
                 }
             }
@@ -306,58 +303,6 @@ fun ConstraintLayoutExample() {
                 // 将文本在父布局中水平居中
                 centerHorizontallyTo(parent)
             })
-        }
-    }
-}
-
-@Composable
-fun CustomLayoutsExample() {
-    LayoutTopicExampleCard("自定义布局") {
-        Text("你可以通过 Layout Composable 创建自己的自定义布局。你需要手动测量和放置子项。")
-        Spacer(Modifier.height(8.dp))
-        Text("下面是一个自定义的 Column，它会将子项交错排列：")
-        Spacer(Modifier.height(16.dp))
-        MyStaggeredColumn(modifier = Modifier.border(1.dp, Color.Gray)) {
-            Text("短文本")
-            Text("这是一个比较长的文本")
-            Text("短的")
-            Text("又一个长长长长长长长长的文本")
-        }
-    }
-}
-
-@Composable
-fun MyStaggeredColumn(
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    // Layout Composable 是自定义布局的核心
-    Layout(
-        modifier = modifier,
-        content = content
-    ) { measurables, constraints ->
-        // 1. 测量 (Measure)
-        // 测量每个子 Composable，获取它们的 Placeable
-        val placeables = measurables.map { measurable ->
-            measurable.measure(constraints)
-        }
-
-        // 2. 布局 (Layout)
-        // layout() 函数定义了父布局的大小，并提供了放置子项的 lambda
-        layout(
-            width = constraints.maxWidth,
-            height = placeables.sumOf { it.height }
-        ) {
-            var yPosition = 0
-            var xOffset = 0
-            // 放置每个子项
-            placeables.forEach { placeable ->
-                placeable.placeRelative(x = xOffset, y = yPosition)
-                // 更新下一个子项的位置
-                yPosition += placeable.height
-                // 交错排列
-                xOffset = if (xOffset == 0) 50 else 0
-            }
         }
     }
 }
