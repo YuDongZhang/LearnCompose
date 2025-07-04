@@ -93,4 +93,6 @@ dependencies {
 
     implementation("androidx.constraintlayout:constraintlayout-compose:1.1.1")
 
+    implementation("androidx.compose.foundation:foundation:1.8.3")
+
 }

@@ -1,6 +1,7 @@
 package com.example.learncompose
 
 import android.os.Bundle
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
@@ -66,6 +67,7 @@ sealed class LayoutTopic(val title: String, val description: String) {
     object ConstraintLayout : LayoutTopic("ConstraintLayout", "为具有复杂要求的界面创建布局。")
     object CustomLayouts : LayoutTopic("自定义布局", "学习如何创建自己的自定义布局。")
     object CustomModifiers : LayoutTopic("自定义修饰符", "学习如何创建自己的修饰符以封装重用逻辑。")
+    object Pager : LayoutTopic("Pager", "实现可滑动的屏幕或项目轮播。")
 
 }
 
@@ -109,7 +111,8 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
         LayoutTopic.MaterialLayouts,
         LayoutTopic.ConstraintLayout,
         LayoutTopic.CustomLayouts,
-        LayoutTopic.CustomModifiers
+        LayoutTopic.CustomModifiers,
+        LayoutTopic.Pager
     )
 
     Scaffold(
@@ -143,7 +146,7 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
 }
 
 // 5. 详情屏幕
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
     Scaffold(
@@ -175,6 +178,7 @@ fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
                     is LayoutTopic.MaterialLayouts -> MaterialLayoutsExample()
                     is LayoutTopic.ConstraintLayout -> ConstraintLayoutExample()
                     is LayoutTopic.CustomLayouts -> CustomLayoutsExample()
+                    is LayoutTopic.Pager -> PagerExamples()
                     else -> {}
                 }
             }
