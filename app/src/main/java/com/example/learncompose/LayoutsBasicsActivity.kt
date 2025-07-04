@@ -65,6 +65,8 @@ sealed class LayoutTopic(val title: String, val description: String) {
     object MaterialLayouts : LayoutTopic("Material Design 布局", "探索 Scaffold, TopAppBar 等 Material 组件。")
     object ConstraintLayout : LayoutTopic("ConstraintLayout", "为具有复杂要求的界面创建布局。")
     object CustomLayouts : LayoutTopic("自定义布局", "学习如何创建自己的自定义布局。")
+    object CustomModifiers : LayoutTopic("自定义修饰符", "学习如何创建自己的修饰符以封装重用逻辑。")
+
 }
 
 // 2. 创建新的 Activity
@@ -106,7 +108,8 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
         LayoutTopic.ConstraintModifiers,
         LayoutTopic.MaterialLayouts,
         LayoutTopic.ConstraintLayout,
-        LayoutTopic.CustomLayouts
+        LayoutTopic.CustomLayouts,
+        LayoutTopic.CustomModifiers
     )
 
     Scaffold(
@@ -168,6 +171,7 @@ fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
                     is LayoutTopic.StandardLayouts -> StandardLayoutsExample()
                     is LayoutTopic.Modifiers -> ComprehensiveModifiersExample()
                     is LayoutTopic.ConstraintModifiers -> ConstraintModifiersExample()
+                    is LayoutTopic.CustomModifiers -> CustomModifiersExample()
                     is LayoutTopic.MaterialLayouts -> MaterialLayoutsExample()
                     is LayoutTopic.ConstraintLayout -> ConstraintLayoutExample()
                     is LayoutTopic.CustomLayouts -> CustomLayoutsExample()
