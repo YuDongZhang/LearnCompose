@@ -95,4 +95,7 @@ dependencies {
 
     implementation("androidx.compose.foundation:foundation:1.8.3")
 
+//    implementation("androidx.compose.foundation:foundation")
+
+
 }

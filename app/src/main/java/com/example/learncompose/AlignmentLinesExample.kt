@@ -19,9 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.AlignmentLine
+import androidx.compose.ui.layout.VerticalAlignmentLine
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+//import androidx.compose.ui.layout.alignBy
+
 
 @Composable
 fun AlignmentLinesExample() {
@@ -38,14 +41,15 @@ fun AlignmentLinesExample() {
         Spacer(Modifier.height(16.dp))
 
         // 定义一个自定义的垂直对齐线
-        val midY = AlignmentLine(merger = { old, new -> Math.min(old, new) })
+        val midY = VerticalAlignmentLine(merger = { old, new -> Math.min(old, new) })
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, Color.Gray)
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+
+//            verticalAlignment = Alignment.Vertical.alignBy(midY) // 1. 让 Row 使用自定义对齐线
         ) {
             Text(
                 text = "Height 40dp",
@@ -53,7 +57,7 @@ fun AlignmentLinesExample() {
                     .height(40.dp)
                     .background(Color.LightGray)
                     .padding(4.dp)
-                    .alignBy(midY) // 使用自定义对齐线
+                    .verticalCenterLayout(midY) // 2. 让 Text 提供对齐线
             )
             Spacer(Modifier.width(8.dp))
             Text(
@@ -62,7 +66,7 @@ fun AlignmentLinesExample() {
                     .height(60.dp)
                     .background(Color.LightGray)
                     .padding(4.dp)
-                    .alignBy(midY) // 使用自定义对齐线
+                    .verticalCenterLayout(midY) // 2. 让 Text 提供对齐线
             )
         }
     }
@@ -81,3 +85,16 @@ fun LayoutTopicExampleCard(title: String, content: @Composable ColumnScope.() ->
         }
     }
 }
+
+/**
+ * 一个自定义修饰符，用于计算组件的垂直中心并将其作为指定的 AlignmentLine 提供。
+ */
+private fun Modifier.verticalCenterLayout(alignmentLine: AlignmentLine) =
+    this.layout { measurable, constraints ->
+        val placeable = measurable.measure(constraints)
+        // 将对齐线的位置设置为高度的一半
+        val lineY = placeable.height / 2
+        layout(placeable.width, placeable.height, mapOf(alignmentLine to lineY)) {
+            placeable.placeRelative(0, 0)
+        }
+    }
