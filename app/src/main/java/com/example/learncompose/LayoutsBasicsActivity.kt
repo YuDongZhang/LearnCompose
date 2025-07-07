@@ -58,19 +58,32 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.learncompose.ui.theme.LearnComposeTheme
 
-// 1. 定义一个密封类来表示不同的布局主题
+// 1. Defines a sealed class to represent different layout topics.
+// A sealed class is used here to restrict the hierarchy to a fixed number of types,
+// ensuring that we can handle all possible layout topics exhaustively (e.g., in a when expression).
 sealed class LayoutTopic(val title: String, val description: String) {
+    // Represents the home screen or the starting point of the layout examples.
     object Home : LayoutTopic("Compose 布局基础", "学习 Compose 中布局的核心组件和概念。")
+    // Covers the standard layout components like Column, Row, and Box.
     object StandardLayouts : LayoutTopic("标准布局组件", "了解 Column, Row, 和 Box 的用法。")
+    // Explains how to use Modifiers to decorate or add behavior to composables.
     object Modifiers : LayoutTopic("修饰符 (Modifiers)", "使用修饰符来装饰或增强可组合项。")
+    // Focuses on modifiers that control size and position, such as fillMaxSize and offset.
     object ConstraintModifiers : LayoutTopic("尺寸和位置修饰符", "学习 fillMaxSize, wrapContentSize, offset 等。")
+    // Details the use of Material Design layout components like Scaffold and TopAppBar.
     object MaterialLayouts : LayoutTopic("Material Design 布局", "探索 Scaffold, TopAppBar 等 Material 组件。")
+    // Explains how to use ConstraintLayout for complex UIs.
     object ConstraintLayout : LayoutTopic("ConstraintLayout", "为具有复杂要求的界面创建布局。")
+    // Teaches how to create custom layouts from scratch.
     object CustomLayouts : LayoutTopic("自定义布局", "学习如何创建自己的自定义布局。")
+    // Teaches how to create custom modifiers to encapsulate reusable logic.
     object CustomModifiers : LayoutTopic("自定义修饰符", "学习如何创建自己的修饰符以封装重用逻辑。")
+    // Covers the implementation of horizontally scrolling pages or carousels.
     object Pager : LayoutTopic("Pager", "实现可滑动的屏幕或项目轮播。")
+    // Explains how to build layouts that adapt to different screen sizes and orientations.
     object AdaptiveLayouts : LayoutTopic("自适应布局", "根据可用空间动态改变布局。")
-
+    // Explains how to use custom alignment lines to precisely align composables.
+    object AlignmentLines : LayoutTopic("对齐线 (Alignment Lines)", "使用自定义对齐线来精确定位 UI 元素。")
 }
 
 // 2. 创建新的 Activity
@@ -115,7 +128,8 @@ fun LayoutsTopicListScreen(onTopicClick: (LayoutTopic) -> Unit) {
         LayoutTopic.CustomLayouts,
         LayoutTopic.CustomModifiers,
         LayoutTopic.Pager,
-        LayoutTopic.AdaptiveLayouts
+        LayoutTopic.AdaptiveLayouts,
+        LayoutTopic.AlignmentLines
     )
 
     Scaffold(
@@ -183,6 +197,7 @@ fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
                     is LayoutTopic.CustomLayouts -> CustomLayoutsExample()
                     is LayoutTopic.Pager -> PagerExamples()
                     is LayoutTopic.AdaptiveLayouts -> AdaptiveLayoutsExample()
+                    is LayoutTopic.AlignmentLines -> AlignmentLinesExample()
                     else -> {}
                 }
             }
@@ -191,20 +206,6 @@ fun LayoutsTopicDetailScreen(topic: LayoutTopic, onBack: () -> Unit) {
 }
 
 // 6. 各个知识点的示例 Composable
-
-@Composable
-fun LayoutTopicExampleCard(title: String, content: @Composable ColumnScope.() -> Unit) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
-            Divider(modifier = Modifier.padding(vertical = 8.dp))
-            content()
-        }
-    }
-}
 
 @Composable
 fun StandardLayoutsExample() {
