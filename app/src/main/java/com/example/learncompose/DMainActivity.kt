@@ -62,6 +62,7 @@ sealed class ComposeTopic(val title: String) {
     object ImageView : ComposeTopic("Image - 图像")
     object Architecture : ComposeTopic("UI Architecture - 架构")
     object LayoutsBasics : ComposeTopic("Layouts - 基础")
+    object Components : ComposeTopic("Components - 组件")
 }
 
 class DMainActivity : ComponentActivity() {
@@ -106,7 +107,8 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
         ComposeTopic.TextFieldView,
         ComposeTopic.ImageView,
         ComposeTopic.Architecture,
-        ComposeTopic.LayoutsBasics
+        ComposeTopic.LayoutsBasics,
+        ComposeTopic.Components
     )
 
     // LocalContext.current 用于获取当前的 Context，这在需要启动 Activity 或访问系统服务时非常有用
@@ -138,6 +140,8 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
                             context.startActivity(Intent(context, ArchitectureActivity::class.java))
                         } else if (topic is ComposeTopic.LayoutsBasics) {
                             context.startActivity(Intent(context, LayoutsBasicsActivity::class.java))
+                        } else if (topic is ComposeTopic.Components) {
+                            context.startActivity(Intent(context, ComponentsActivity::class.java))
                         } else {
                             onTopicClick(topic)
                         }

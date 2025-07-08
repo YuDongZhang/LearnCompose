@@ -104,6 +104,12 @@
             android:label="UI Architecture"
             android:theme="@style/Theme.LearnCompose" />
 
+        <activity
+            android:name=".ComponentsActivity"
+            android:exported="false"
+            android:label="UI Architecture"
+            android:theme="@style/Theme.LearnCompose" />
+
 
     </application>
 
