@@ -1,5 +1,6 @@
 package com.example.learncompose.component
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
@@ -51,6 +52,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.launch
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.foundation.layout.offset
+import androidx.compose.ui.unit.offset
 
 // 这是一个演示如何自定义 Compose 动画的示例文件
 
@@ -87,6 +91,9 @@ fun CustomizeAnimationExampleScreen() {
 
         AnimateContentSizeExample()
         Spacer(modifier = Modifier.height(16.dp))
+
+        // 共享元素动画示例入口
+        SharedElementExampleEntry()
     }
 }
 
@@ -328,6 +335,69 @@ fun AnimateContentSizeExample() {
             Text(if (expanded) "折叠" else "展开")
         }
     }
+}
+
+/**
+ * 共享元素动画示例
+ * 参考：https://developer.android.com/develop/ui/compose/animation/shared-elements?hl=zh-cn
+ *
+ * 该示例演示了两个 Box 之间的共享元素动画，点击切换时，红色方块会平滑移动到蓝色方块的位置。
+ * 使用 SharedTransitionLayout 和 sharedElementWithCallerManagedVisibility 实现。
+ */
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun SharedElementExampleEntry() {
+    var selectFirst by remember { mutableStateOf(true) }
+    val key = remember { Any() }
+
+    Text(
+        "共享元素动画示例 (点击下方区域切换)",
+        style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    androidx.compose.animation.SharedTransitionLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(220.dp)
+            .background(Color(0xFFF5F5F5))
+            .clickable { selectFirst = !selectFirst }
+            .padding(10.dp)
+    ) {
+        // 第一个 Box
+        if (selectFirst) {
+            Box(
+                Modifier
+                    .sharedElementWithCallerManagedVisibility(
+                        rememberSharedContentState(key = key),
+                        visible = true
+                    )
+                    .background(Color.Red)
+                    .size(100.dp)
+            ) {
+                Text("A", color = Color.White, modifier = Modifier.align(Alignment.Center))
+            }
+        }
+        // 第二个 Box
+        if (!selectFirst) {
+            Box(
+                Modifier
+                    .offset(100.dp, 80.dp)
+                    .sharedElementWithCallerManagedVisibility(
+                        rememberSharedContentState(key = key),
+                        visible = true
+                    )
+                    .background(Color.Blue)
+                    .size(100.dp)
+            ) {
+                Text("B", color = Color.White, modifier = Modifier.align(Alignment.Center))
+            }
+        }
+    }
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        "点击上方灰色区域，红蓝方块会平滑切换位置，演示共享元素动画。",
+        style = androidx.compose.material3.MaterialTheme.typography.bodySmall
+    )
 }
 
 @Preview(showBackground = true)

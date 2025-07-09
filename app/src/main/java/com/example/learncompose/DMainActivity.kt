@@ -66,6 +66,8 @@ sealed class ComposeTopic(val title: String) {
     object Components : ComposeTopic("Components - 组件")
     // 添加自定义动画主题
     object CustomizeAnimationView : ComposeTopic("Custom Animation - 自定义动画")
+    // 新增
+    object TouchInputDemo : ComposeTopic("Touch Input - 触摸输入演示")
 }
 
 class DMainActivity : ComponentActivity() {
@@ -113,7 +115,9 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
         ComposeTopic.LayoutsBasics,
         ComposeTopic.Components,
         // 添加自定义动画主题到列表
-        ComposeTopic.CustomizeAnimationView
+        ComposeTopic.CustomizeAnimationView,
+        // 添加触摸输入演示入口
+        ComposeTopic.TouchInputDemo
     )
 
     // LocalContext.current 用于获取当前的 Context，这在需要启动 Activity 或访问系统服务时非常有用
@@ -147,6 +151,8 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
                             context.startActivity(Intent(context, LayoutsBasicsActivity::class.java))
                         } else if (topic is ComposeTopic.Components) {
                             context.startActivity(Intent(context, ComponentsActivity::class.java))
+                        } else if (topic is ComposeTopic.TouchInputDemo) {
+                            context.startActivity(Intent(context, TouchInputActivity::class.java))
                         } else {
                             onTopicClick(topic)
                         }
