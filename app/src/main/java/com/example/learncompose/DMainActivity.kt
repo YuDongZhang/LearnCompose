@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.learncompose.ui.theme.LearnComposeTheme
+import com.example.learncompose.component.CustomizeAnimationExampleScreen // 导入自定义动画示例 Composable
 
 // 定义一个密封类来表示不同的屏幕，方便进行类型安全的导航
 // 将 Screen 重命名为 ComposeTopic，使其名称更具体，避免与其他库或代码中的 "Screen" 冲突
@@ -63,6 +64,8 @@ sealed class ComposeTopic(val title: String) {
     object Architecture : ComposeTopic("UI Architecture - 架构")
     object LayoutsBasics : ComposeTopic("Layouts - 基础")
     object Components : ComposeTopic("Components - 组件")
+    // 添加自定义动画主题
+    object CustomizeAnimationView : ComposeTopic("Custom Animation - 自定义动画")
 }
 
 class DMainActivity : ComponentActivity() {
@@ -108,7 +111,9 @@ fun HomeScreen(onTopicClick: (ComposeTopic) -> Unit) {
         ComposeTopic.ImageView,
         ComposeTopic.Architecture,
         ComposeTopic.LayoutsBasics,
-        ComposeTopic.Components
+        ComposeTopic.Components,
+        // 添加自定义动画主题到列表
+        ComposeTopic.CustomizeAnimationView
     )
 
     // LocalContext.current 用于获取当前的 Context，这在需要启动 Activity 或访问系统服务时非常有用
@@ -189,11 +194,15 @@ fun DetailScreen(topic: ComposeTopic, onBack: () -> Unit) {
                 is ComposeTopic.StateView -> StateExampleScreen()
                 is ComposeTopic.TextFieldView -> TextFieldExampleScreen()
                 is ComposeTopic.ImageView -> ImageExampleScreen()
-                else -> {} // Home, Architecture, LayoutsBasics screen 在此不处理
+                // 添加自定义动画示例屏幕
+                is ComposeTopic.CustomizeAnimationView -> CustomizeAnimationExampleScreen()
+                else -> {} // Home, Architecture, LayoutsBasics, Components screen 在此不处理
             }
         }
     }
 }
+
+
 
 @Composable
 fun ExampleCard(title: String, content: @Composable () -> Unit) {

@@ -40,6 +40,10 @@ import com.example.learncompose.component.DialogExamples
 import com.example.learncompose.component.CarouselExamples
 import com.example.learncompose.component.CheckboxExamples
 import com.example.learncompose.component.ImageExamples
+import com.example.learncompose.component.DrawingExamples
+import com.example.learncompose.component.AnimationExamples
+import com.example.learncompose.component.ValueBasedAnimationExamples
+import com.example.learncompose.component.AdvancedAnimationExamples
 import com.example.learncompose.ui.theme.LearnComposeTheme
 
 // 1. 定义一个密封类来表示不同的组件主题
@@ -51,6 +55,10 @@ sealed class ComponentTopic(val title: String, val description: String) {
     object Carousel : ComponentTopic("Carousel - 轮播", "轮播组件允许用户在同一层级的内容之间进行水平翻页。")
     object Checkboxes : ComponentTopic("Checkboxes - 复选框", "复选框允许用户从一个集合中选择一个或多个项目。")
     object Image : ComponentTopic("Image - 图像", "图像是用于在屏幕上绘制图形的组件。")
+    object Drawing : ComponentTopic("Drawing - 绘图", "使用 Canvas 和修饰符进行自定义绘图。")
+    object Animation : ComponentTopic("Animation - 动画", "探索 Compose 中各种强大的动画 API。")
+    object ValueBasedAnimation : ComponentTopic("Value-based Animation - 基于值的动画", "使用 Animatable 和 AnimationSpec 创建精细控制的动画。")
+    object AdvancedAnimation : ComponentTopic("Advanced Animation - 高级动画", "探索手势驱动动画和 LookaheadLayout。")
     // 可以在这里添加更多组件...
 }
 
@@ -97,7 +105,11 @@ fun ComponentListScreen(onTopicClick: (ComponentTopic) -> Unit) {
         ComponentTopic.Dialogs,
         ComponentTopic.Carousel,
         ComponentTopic.Checkboxes,
-        ComponentTopic.Image
+        ComponentTopic.Image,
+        ComponentTopic.Drawing,
+        ComponentTopic.Animation,
+        ComponentTopic.ValueBasedAnimation,
+        ComponentTopic.AdvancedAnimation
     )
 
     Scaffold(
@@ -162,6 +174,10 @@ fun ComponentDetailScreen(topic: ComponentTopic, onBack: () -> Unit) {
                     is ComponentTopic.Carousel -> CarouselExamples()
                     is ComponentTopic.Checkboxes -> CheckboxExamples()
                     is ComponentTopic.Image -> ImageExamples()
+                    is ComponentTopic.Drawing -> DrawingExamples()
+                    is ComponentTopic.Animation -> AnimationExamples()
+                    is ComponentTopic.ValueBasedAnimation -> ValueBasedAnimationExamples()
+                    is ComponentTopic.AdvancedAnimation -> AdvancedAnimationExamples()
                     else -> {}
                 }
             }
