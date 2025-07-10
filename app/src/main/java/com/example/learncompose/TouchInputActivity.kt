@@ -40,6 +40,7 @@ fun TouchInputScreen() {
     var showFocusExamples by remember { mutableStateOf(false) }
     var showStylusExamples by remember { mutableStateOf(false) }
     var showCopyPasteExamples by remember { mutableStateOf(false) }
+    var showDialogExamples by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(title = { Text("Compose 触摸输入演示") })
@@ -56,6 +57,13 @@ fun TouchInputScreen() {
                         modifier = Modifier.fillMaxWidth()
                     ) { Text("返回") }
                     CopyPasteExamplesScreen()
+                }
+                showDialogExamples -> {
+                    Button(
+                        onClick = { showDialogExamples = false },
+                        modifier = Modifier.fillMaxWidth()
+                    ) { Text("返回") }
+                    DialogExamplesMaterial3Screen()
                 }
                 showStylusExamples -> {
                     Button(
@@ -120,6 +128,12 @@ fun TouchInputScreen() {
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("复制粘贴示例")
+                    }
+                    Button(
+                        onClick = { showDialogExamples = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text("Material3 对话框示例")
                     }
                 }
             }

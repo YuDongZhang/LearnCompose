@@ -59,6 +59,12 @@ sealed class ComponentTopic(val title: String, val description: String) {
     object Animation : ComponentTopic("Animation - 动画", "探索 Compose 中各种强大的动画 API。")
     object ValueBasedAnimation : ComponentTopic("Value-based Animation - 基于值的动画", "使用 Animatable 和 AnimationSpec 创建精细控制的动画。")
     object AdvancedAnimation : ComponentTopic("Advanced Animation - 高级动画", "探索手势驱动动画和 LookaheadLayout。")
+    // 新增 Chip 组件
+    object Material3Chips : ComponentTopic("Material3 Chips - 条状标签", "Material3 风格的 Chip 组件，包括 AssistChip、FilterChip、InputChip、SuggestionChip 等。")
+    // 新增 DatePicker 组件
+    object Material3DatePicker : ComponentTopic("Material3 DatePicker - 日期选择器", "Material3 风格的日期选择器，包括单选、范围、对话框等。")
+    // 新增 Material3 Dialog 组件
+    object Material3Dialog : ComponentTopic("Material3 Dialog - 对话框", "Material3 风格的对话框，包括 AlertDialog、自定义对话框等。")
     // 可以在这里添加更多组件...
 }
 
@@ -102,6 +108,12 @@ fun ComponentListScreen(onTopicClick: (ComponentTopic) -> Unit) {
     val topics = listOf(
         ComponentTopic.Cards,
         ComponentTopic.Chips,
+        // 新增 Material3Chips
+        ComponentTopic.Material3Chips,
+        // 新增 Material3DatePicker
+        ComponentTopic.Material3DatePicker,
+        // 新增 Material3Dialog
+        ComponentTopic.Material3Dialog,
         ComponentTopic.Dialogs,
         ComponentTopic.Carousel,
         ComponentTopic.Checkboxes,
@@ -170,6 +182,9 @@ fun ComponentDetailScreen(topic: ComponentTopic, onBack: () -> Unit) {
                 when (topic) {
                     is ComponentTopic.Cards -> CardExamples()
                     is ComponentTopic.Chips -> ChipExamples()
+                    is ComponentTopic.Material3Chips -> ChipExamplesScreen()
+                    is ComponentTopic.Material3DatePicker -> DatePickerExamplesScreen()
+                    is ComponentTopic.Material3Dialog -> DialogExamplesMaterial3Screen()
                     is ComponentTopic.Dialogs -> DialogExamples()
                     is ComponentTopic.Carousel -> CarouselExamples()
                     is ComponentTopic.Checkboxes -> CheckboxExamples()
