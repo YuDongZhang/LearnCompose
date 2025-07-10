@@ -65,6 +65,28 @@ sealed class ComponentTopic(val title: String, val description: String) {
     object Material3DatePicker : ComponentTopic("Material3 DatePicker - 日期选择器", "Material3 风格的日期选择器，包括单选、范围、对话框等。")
     // 新增 Material3 Dialog 组件
     object Material3Dialog : ComponentTopic("Material3 Dialog - 对话框", "Material3 风格的对话框，包括 AlertDialog、自定义对话框等。")
+    // 新增 Divider 组件
+    object Divider : ComponentTopic("Divider - 分隔线", "用于分隔列表或容器中的项，支持水平和垂直分隔线。")
+    // 新增 Menu 组件
+    object Menu : ComponentTopic("Menu - 菜单", "用于显示一组选项，包括下拉菜单和暴露式下拉菜单。")
+    // 新增 List 组件
+    object List : ComponentTopic("List - 列表", "Compose 中的 LazyColumn、LazyRow、LazyVerticalGrid、分组、嵌套、footer、divider 等官方列表用法。")
+    // 新增 Navigation 组件
+    object Navigation : ComponentTopic("Navigation - 导航", "Compose 官方 NavigationBar、Drawer、NavigationRail 三大导航组件用法与交互演示。")
+    // 新增 Progress 组件
+    object Progress : ComponentTopic("Progress - 进度指示器", "Compose 官方 Linear/CircularProgressIndicator 进度条用法，支持确定/不确定进度。")
+    // 新增 PullToRefresh 组件
+    object PullToRefresh : ComponentTopic("PullToRefresh - 下拉刷新", "Compose 官方 PullToRefreshBox 下拉刷新与自定义指示器用法演示。")
+    // 新增 RadioButtonAndResources 组件
+    object RadioButtonAndResources : ComponentTopic("RadioButton & Resources - 单选按钮与资源", "Compose 官方 RadioButton 单选按钮和 Resources 资源访问用法演示。")
+    // 新增 Scaffold 组件
+    object Scaffold : ComponentTopic("Scaffold - 脚手架", "Compose 官方 Scaffold 脚手架用法，包含顶部应用栏、底部应用栏、悬浮操作按钮等。")
+    // 新增 SearchBar 组件
+    object SearchBar : ComponentTopic("SearchBar - 搜索栏", "Compose 官方 SearchBar 搜索栏用法，包含搜索建议、搜索结果等。")
+    // 新增 SliderAndSnackbar 组件
+    object SliderAndSnackbar : ComponentTopic("Slider & Snackbar - 滑块与快捷信息栏", "Compose 官方 Slider、RangeSlider 和 Snackbar 用法演示。")
+    // 新增 TabsAndTimePickersAndTooltip 组件
+    object TabsAndTimePickersAndTooltip : ComponentTopic("Tabs & TimePicker & Tooltip - 标签页、时间选择器与工具提示", "Compose 官方 TabRow、TimePicker、Tooltip 用法演示。")
     // 可以在这里添加更多组件...
 }
 
@@ -114,6 +136,28 @@ fun ComponentListScreen(onTopicClick: (ComponentTopic) -> Unit) {
         ComponentTopic.Material3DatePicker,
         // 新增 Material3Dialog
         ComponentTopic.Material3Dialog,
+        // 新增 Divider
+        ComponentTopic.Divider,
+        // 新增 Menu
+        ComponentTopic.Menu,
+        // 新增 List
+        ComponentTopic.List,
+        // 新增 Navigation
+        ComponentTopic.Navigation,
+        // 新增 Progress
+        ComponentTopic.Progress,
+        // 新增 PullToRefresh
+        ComponentTopic.PullToRefresh,
+        // 新增 RadioButtonAndResources
+        ComponentTopic.RadioButtonAndResources,
+        // 新增 Scaffold
+        ComponentTopic.Scaffold,
+        // 新增 SearchBar
+        ComponentTopic.SearchBar,
+        // 新增 SliderAndSnackbar
+        ComponentTopic.SliderAndSnackbar,
+        // 新增 TabsAndTimePickersAndTooltip
+        ComponentTopic.TabsAndTimePickersAndTooltip,
         ComponentTopic.Dialogs,
         ComponentTopic.Carousel,
         ComponentTopic.Checkboxes,
@@ -185,6 +229,17 @@ fun ComponentDetailScreen(topic: ComponentTopic, onBack: () -> Unit) {
                     is ComponentTopic.Material3Chips -> ChipExamplesScreen()
                     is ComponentTopic.Material3DatePicker -> DatePickerExamplesScreen()
                     is ComponentTopic.Material3Dialog -> DialogExamplesMaterial3Screen()
+                    is ComponentTopic.Divider -> com.example.learncompose.component.DividerExamples()
+                    is ComponentTopic.Menu -> com.example.learncompose.component.MenuExamples()
+                    is ComponentTopic.List -> com.example.learncompose.component.ListExamples()
+                    is ComponentTopic.Navigation -> com.example.learncompose.component.NavigationExamples()
+                    is ComponentTopic.Progress -> com.example.learncompose.component.ProgressExamples()
+                    is ComponentTopic.PullToRefresh -> com.example.learncompose.component.PullToRefreshExamples()
+                    is ComponentTopic.RadioButtonAndResources -> com.example.learncompose.component.RadioButtonAndResourcesExamples()
+                    is ComponentTopic.Scaffold -> com.example.learncompose.component.ScaffoldExamples()
+                    is ComponentTopic.SearchBar -> com.example.learncompose.component.SearchBarExamples()
+                    is ComponentTopic.SliderAndSnackbar -> com.example.learncompose.component.SliderAndSnackbarExamples()
+                    is ComponentTopic.TabsAndTimePickersAndTooltip -> com.example.learncompose.component.TabsAndTimePickersAndTooltipExamples()
                     is ComponentTopic.Dialogs -> DialogExamples()
                     is ComponentTopic.Carousel -> CarouselExamples()
                     is ComponentTopic.Checkboxes -> CheckboxExamples()
