@@ -1,15 +1,11 @@
 package com.example.learncompose
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -19,18 +15,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -42,40 +29,25 @@ import com.example.learncompose.ui.theme.LearnComposeTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-/**
- * 讲师点评：
- * 这里是我们的主 Activity，也是 App 的唯一入口。
- * 它继承自 ComponentActivity，这是 Jetpack Compose 应用的标准做法。
- */
 class BasicKnowledgeActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             LearnComposeTheme {
-                // AppNavigator 是我们导航系统的核心
                 AppNavigator()
             }
         }
     }
 }
 
-/**
- * 讲师点评：
- * 定义一个数据类来表示我们的每一个课程主题。
- * 包含标题、描述和导航用的路由（route）。
- */
 data class Topic(
     val title: String,
     val description: String,
     val route: String
 )
 
-/**
- * 讲师点评：
- * 在这里我们定义了所有的课程主题。
- * 以后想添加新的学习页面，只需要在这里增加一个 Topic 即可。
- */
 val topics = listOf(
+    Topic("幂等性 (Idempotence)", "理解 Composable 函数为何必须幂等", "topic/idempotence"),
     Topic("remember & mutableStateOf", "学习 Compose 如何记忆状态", "topic/remember"),
     Topic("LaunchedEffect", "在 Composable 中安全地执行挂起函数", "topic/launchedeffect"),
     Topic("rememberCoroutineScope", "获取一个感知生命周期的协程作用域", "topic/rememberscope"),
@@ -84,35 +56,23 @@ val topics = listOf(
     Topic("derivedStateOf", "将一个或多个状态对象转换为其他状态", "topic/derivedstateof")
 )
 
-/**
- * 讲师点评：
- * 这是导航系统的核心 Composable。
- * NavController 用于导航控制。
- * NavHost 是一个容器，用于显示当前路由对应的 Composable 页面。
- */
 @Composable
 fun AppNavigator() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "topic_list") {
-        // 主题列表页
         composable("topic_list") {
             TopicListScreen(navController = navController, topics = topics)
         }
-        // 各个主题的详情页
-        composable(topics[0].route) { RememberScreen() }
-        composable(topics[1].route) { LaunchedEffectScreen() }
-        composable(topics[2].route) { RememberCoroutineScopeScreen() }
-        composable(topics[3].route) { RememberUpdatedStateScreen() }
-        composable(topics[4].route) { DisposableEffectScreen() }
-        composable(topics[5].route) { DerivedStateOfScreen() }
+        composable("topic/idempotence") { IdempotenceScreen() }
+        composable("topic/remember") { RememberScreen() }
+        composable("topic/launchedeffect") { LaunchedEffectScreen() }
+        composable("topic/rememberscope") { RememberCoroutineScopeScreen() }
+        composable("topic/rememberupdatedstate") { RememberUpdatedStateScreen() }
+        composable("topic/disposableeffect") { DisposableEffectScreen() }
+        composable("topic/derivedstateof") { DerivedStateOfScreen() }
     }
 }
 
-/**
- * 讲师点评：
- * 我们的“目录”页面。
- * 使用 LazyColumn 来高效地显示一个可滚动的列表。
- */
 @Composable
 fun TopicListScreen(navController: NavController, topics: List<Topic>) {
     Scaffold(
@@ -123,8 +83,8 @@ fun TopicListScreen(navController: NavController, topics: List<Topic>) {
                 modifier = Modifier.padding(16.dp)
             )
         }
-    ) { paddingValues ->
-        LazyColumn(modifier = Modifier.padding(paddingValues)) {
+    ) {
+        LazyColumn(modifier = Modifier.padding(it)) {
             items(topics) { topic ->
                 TopicListItem(topic = topic) {
                     navController.navigate(topic.route)
@@ -149,8 +109,6 @@ fun TopicListItem(topic: Topic, onClick: () -> Unit) {
     }
 }
 
-// --- 以下是每个知识点的独立学习页面 ---
-
 @Composable
 fun TopicScreenScaffold(title: String, content: @Composable () -> Unit) {
     Scaffold(
@@ -161,9 +119,9 @@ fun TopicScreenScaffold(title: String, content: @Composable () -> Unit) {
                 modifier = Modifier.padding(16.dp)
             )
         }
-    ) { paddingValues ->
+    ) {
         Column(modifier = Modifier
-            .padding(paddingValues)
+            .padding(it)
             .padding(16.dp)
             .fillMaxSize()) {
             content()
@@ -172,7 +130,7 @@ fun TopicScreenScaffold(title: String, content: @Composable () -> Unit) {
 }
 
 @Composable
-fun ExplanationCard(title: String, explanation: String, code: String) {
+fun ExplanationCard(title: String, explanation: String, code: String? = null) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
@@ -181,25 +139,78 @@ fun ExplanationCard(title: String, explanation: String, code: String) {
             Text(text = title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = explanation, style = MaterialTheme.typography.bodyLarge)
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "示例代码:",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = code,
-                style = MaterialTheme.typography.bodyMedium,
-                fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
-                lineHeight = 20.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            )
+            if (code != null) {
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(
+                    text = "示例代码:",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = code,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontFamily = MaterialTheme.typography.bodyMedium.fontFamily,
+                    lineHeight = 20.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
+                )
+            }
         }
     }
     Spacer(modifier = Modifier.height(16.dp))
+}
+
+// --- 新增的“幂等性”学习页面 ---
+
+private var nonIdempotentCounter = 0
+
+@Composable
+fun IdempotenceScreen() {
+    TopicScreenScaffold(title = "幂等性 (Idempotence)") {
+        ExplanationCard(
+            title = "什么是幂等性？",
+            explanation = "“幂等”是指一个操作或函数，无论用相同的输入执行多少次，结果都是相同的。\n\n例如 `val x = 2 + 3` 是幂等的，`x` 永远是 `5`。但 `val x = 2 + Random.nextInt()` 不是幂等的，每次结果都可能不同。"
+        )
+
+        ExplanationCard(
+            title = "为什么 Compose 需要幂等性？",
+            explanation = "Compose 可以随时、任意次地“重组”（重新执行）你的 Composable 函数来更新UI。\n\n如果你的函数有“副作用”（Side Effects），比如修改外部变量、依赖随机数等，那么每次重组都会产生不同的结果，导致UI行为不可预测、混乱不堪。因此，编写 Composable 函数时必须保证它是幂等的。"
+        )
+
+        var recomposeTrigger by remember { mutableStateOf(0) }
+
+        Button(onClick = { recomposeTrigger++ }) {
+            Text(text = "点击我触发重组 (当前: $recomposeTrigger)")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        NonIdempotentExample(recomposeTrigger)
+    }
+}
+
+@Composable
+fun NonIdempotentExample(trigger: Int) {
+    Log.d("Idempotence", "NonIdempotentExample is being recomposed. Trigger: $trigger")
+
+    nonIdempotentCounter++
+    val nonIdempotentText = "非幂等函数被调用了 $nonIdempotentCounter 次"
+
+    val idempotentCounter = remember { mutableStateOf(0) }
+    idempotentCounter.value++
+    val idempotentText = "幂等函数被调用了 ${idempotentCounter.value} 次 (此为演示，实际应在onClick中修改)"
+
+    Column {
+        Text("--- 反面教材 (错误) ---", color = Color.Red, fontWeight = FontWeight.Bold)
+        Text(nonIdempotentText)
+        Text("每次重组，计数器都会意外增加，因为我们修改了外部变量。", style = MaterialTheme.typography.bodySmall)
+        Spacer(Modifier.height(16.dp))
+
+        Text("--- 正面教材 (正确) ---", color = Color.Green, fontWeight = FontWeight.Bold)
+        Text(idempotentText)
+        Text("计数器状态由 Compose 管理，行为可预测。", style = MaterialTheme.typography.bodySmall)
+    }
 }
 
 
@@ -314,8 +325,8 @@ fun ShowTextWithDelay(text: String) {
     LaunchedEffect(key1 = Unit) {
         delay(3000L)
         // 即使外部的 text 参数在3秒内变了，
-        // updatedText.value 也能取到最新的值
-        showText = "最新内容是: ${'$'}{updatedText}"
+        // updatedText 也能取到最新的值
+        showText = "最新内容是: //$//{updatedText}"
     }
     Text(text = showText)
 }
@@ -325,7 +336,7 @@ fun ShowTextWithDelay(text: String) {
         Button(onClick = { textToShow = "更新后的文本" }) {
             Text(text = "点击更新文本")
         }
-        ShowTextWithDelay(text = textToShow)
+        ShowTextWithDelayExample(text = textToShow)
     }
 }
 
@@ -341,10 +352,10 @@ fun DisposableEffectScreen() {
 @Composable
 fun LifecycleLogger(name: String) {
     DisposableEffect(key1 = name) {
-        println("Composable '$'name' 进入组合")
+        println("Composable '$/{/name}' 进入组合")
 
         onDispose {
-            println("Composable '$'name' 离开组合")
+            println("Composable '$/{name}' 离开组合")
         }
     }
     Text("这是一个带生命周期日志的 Composable")
@@ -356,7 +367,7 @@ fun LifecycleLogger(name: String) {
             Text(if (showLogger) "隐藏 Logger" else "显示 Logger")
         }
         if (showLogger) {
-            LifecycleLogger(name = "测试")
+            LifecycleLoggerExample(name = "测试")
         }
     }
 }
@@ -391,7 +402,7 @@ fun FilteredList() {
 }
             """.trimIndent()
         )
-        FilteredList()
+        FilteredListExample()
     }
 }
 
@@ -437,7 +448,7 @@ fun CoroutineTestBtExample() {
 }
 
 @Composable
-fun ShowTextWithDelay(text: String) {
+fun ShowTextWithDelayExample(text: String) {
     var showText by remember { mutableStateOf("等待中...") }
     val updatedText by rememberUpdatedState(newValue = text)
     LaunchedEffect(key1 = Unit) {
@@ -448,7 +459,7 @@ fun ShowTextWithDelay(text: String) {
 }
 
 @Composable
-fun LifecycleLogger(name: String) {
+fun LifecycleLoggerExample(name: String) {
     DisposableEffect(key1 = name) {
         println("Logger: Composable '$name' entered composition")
         onDispose {
@@ -459,7 +470,7 @@ fun LifecycleLogger(name: String) {
 }
 
 @Composable
-fun FilteredList() {
+fun FilteredListExample() {
     val list = remember { mutableStateListOf("Apple", "Banana", "Cherry", "Date", "Avocado") }
     var filter by remember { mutableStateOf("") }
 
