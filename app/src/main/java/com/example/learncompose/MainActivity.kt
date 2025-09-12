@@ -1,21 +1,17 @@
 package com.example.learncompose
 
+import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -23,45 +19,81 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-// {{ edit_1 }}
-import androidx.compose.ui.platform.LocalContext // 导入 LocalContext 用于获取 Context
-import android.widget.Toast // 导入 Toast 用于显示提示
-import androidx.compose.runtime.rememberCoroutineScope // 导入 rememberCoroutineScope 用于在事件中启动协程
-import kotlinx.coroutines.launch // 导入 launch 用于启动协程
-import kotlinx.coroutines.delay // 导入 delay 用于协程中的延迟
-// {{ /edit_1 }}
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.learncompose.ui.theme.LearnComposeTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+// Data class to represent a navigation destination
+data class NavigationItem(val name: String, val destination: Class<out Activity>)
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        // Define your navigation list here
+        // This makes it easy to add, remove, or change navigation targets
+        val navigationItems = listOf(
+            NavigationItem("Go to A Activity", AMainActivity::class.java),
+            NavigationItem("Go to B Activity", BMainActivity::class.java),
+            NavigationItem("Go to C Activity", CMainActivity::class.java),
+            NavigationItem("Go to D Activity", DMainActivity::class.java),
+            NavigationItem("Go to AuthActivity", AuthActivity::class.java),
+            NavigationItem("基础知识", BasicKnowledgeActivity::class.java),
+        )
+
         setContent {
             LearnComposeTheme {
-                // {{ edit_1 }}
-                // 使用 Scaffold 包裹内容，Scaffold 会处理系统栏的内边距
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    // 将 Conversation 放在 Scaffold 的内容区域，并应用 Scaffold 提供的内边距
-                    Conversation(
-                        messages = SampleData.conversationSample,
-                        modifier = Modifier.padding(innerPadding) // 将内边距应用到 Conversation
-                    )
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        Conversation(
+                            messages = SampleData.conversationSample,
+                            modifier = Modifier.weight(1f)
+                        )
+                        // Pass the navigation list to the composable
+                        ActivityNavigationList(items = navigationItems)
+                    }
                 }
-                // {{ /edit_1 }}
             }
         }
     }
 }
+
+@Composable
+fun ActivityNavigationList(items: List<NavigationItem>, modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+
+    LazyColumn(modifier = modifier) {
+        items(items) { item ->
+            Text(
+                text = item.name,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        try {
+                            val intent = Intent(context, item.destination)
+                            context.startActivity(intent)
+                        } catch (e: ClassNotFoundException) {
+                            Toast.makeText(
+                                context,
+                                "Activity not found: ${item.destination.name}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    .padding(16.dp)
+            )
+        }
+    }
+}
+
 
 @Composable
 fun MessageCard(msg: Message) {
@@ -98,9 +130,14 @@ fun MessageCard(msg: Message) {
                     // 普通组合函数：点击切换展开/折叠状态
                     isExpanded = !isExpanded
                 }
+
                 "LaunchedEffect" -> {
                     // LaunchedEffect 通常用于在 Composable 进入组合或 key 变化时执行异步操作
-                    Toast.makeText(context, "点击了 LaunchedEffect (通常由状态变化触发)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "点击了 LaunchedEffect (通常由状态变化触发)",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     /*
                     // 示例结构 (非点击直接触发):
                     LaunchedEffect(key1 = someState) {
@@ -110,10 +147,15 @@ fun MessageCard(msg: Message) {
                     }
                     */
                 }
+
                 "rememberCoroutineScope" -> {
                     // rememberCoroutineScope 用于获取一个与 Composable 生命周期绑定的 Scope
                     // 可以在事件回调中启动协程
-                    Toast.makeText(context, "点击了 rememberCoroutineScope (用于在事件中启动协程)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "点击了 rememberCoroutineScope (用于在事件中启动协程)",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     // 示例用法: 在点击事件中启动一个协程
                     scope.launch {
                         // 这个协程与当前 Composable 的生命周期绑定
@@ -124,9 +166,14 @@ fun MessageCard(msg: Message) {
                         // Toast.makeText(context, "协程任务完成!", Toast.LENGTH_SHORT).show() // 注意: 直接在协程中显示 Toast 可能需要主线程上下文
                     }
                 }
+
                 "DisposableEffect" -> {
                     // DisposableEffect 用于需要在 Composable 离开组合时进行清理的附带效应
-                    Toast.makeText(context, "点击了 DisposableEffect (用于资源管理/清理)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "点击了 DisposableEffect (用于资源管理/清理)",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     /*
                     // 示例结构 (非点击直接触发):
                     DisposableEffect(key1 = resource) {
@@ -140,10 +187,15 @@ fun MessageCard(msg: Message) {
                     }
                     */
                 }
+
                 "SideEffect" -> {
                     // SideEffect 用于将 Compose 状态发布到非 Compose 代码
                     // 它会在每次成功重组后同步执行
-                    Toast.makeText(context, "点击了 SideEffect (用于同步 Compose 状态到外部)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        "点击了 SideEffect (用于同步 Compose 状态到外部)",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     /*
                     // 示例结构 (在每次成功重组后执行):
                     SideEffect {
@@ -152,20 +204,26 @@ fun MessageCard(msg: Message) {
                     }
                     */
                 }
+
                 "rememberUpdatedState" -> {
-                     // rememberUpdatedState 用于在 LaunchedEffect 或 DisposableEffect 中引用可能随时间变化的值
-                     // 确保 Effect 使用的是最新的值，而无需重新启动 Effect
-                     Toast.makeText(context, "点击了 rememberUpdatedState (用于在 Effect 中引用最新状态)", Toast.LENGTH_SHORT).show()
-                     /*
-                     // 示例结构 (在 LaunchedEffect/DisposableEffect 内部使用):
-                     val latestValue by rememberUpdatedState(valueThatCanChange)
-                     LaunchedEffect(Unit) { // Effect 的 key 固定，只启动一次
-                         kotlinx.coroutines.delay(someTime)
-                         // 在这里使用 latestValue，即使 valueThatCanChange 在 Effect 启动后发生了变化
-                         // 例如: performAction(latestValue)
-                     }
-                     */
+                    // rememberUpdatedState 用于在 LaunchedEffect 或 DisposableEffect 中引用可能随时间变化的值
+                    // 确保 Effect 使用的是最新的值，而无需重新启动 Effect
+                    Toast.makeText(
+                        context,
+                        "点击了 rememberUpdatedState (用于在 Effect 中引用最新状态)",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    /*
+                    // 示例结构 (在 LaunchedEffect/DisposableEffect 内部使用):
+                    val latestValue by rememberUpdatedState(valueThatCanChange)
+                    LaunchedEffect(Unit) { // Effect 的 key 固定，只启动一次
+                        kotlinx.coroutines.delay(someTime)
+                        // 在这里使用 latestValue，即使 valueThatCanChange 在 Effect 启动后发生了变化
+                        // 例如: performAction(latestValue)
+                    }
+                    */
                 }
+
                 else -> {
                     // 默认行为：切换展开/折叠状态
                     isExpanded = !isExpanded
@@ -205,7 +263,6 @@ fun MessageCard(msg: Message) {
             }
         }
     }
-    // {{ /edit_3 }}
 }
 
 data class Message(val author: String, val body: String)
@@ -252,7 +309,6 @@ fun PreviewConversation() {
         Conversation(SampleData.conversationSample)
     }
 }
-// {{ /edit_4 }}
 
 //这个没有达到教程的结果，而且发现 @Preview 加一个会复制一份
 @Preview(name = "Light Mode")
@@ -268,7 +324,6 @@ fun PreviewMessageCard() {
             msg = Message("Lexi", "Hey, take a look at Jetpack Compose, it's great!")
         )
     }
-
 }
 
 
@@ -296,7 +351,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             Text(text = "hahha")
         }
     }
-
 }
 
 //@Preview  用来预览的

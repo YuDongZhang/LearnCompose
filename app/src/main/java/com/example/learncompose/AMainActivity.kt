@@ -3,7 +3,7 @@ package com.example.learncompose
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -34,16 +34,28 @@ import kotlinx.coroutines.launch
 /**
  * https://juejin.cn/post/7244420350753144891
  */
-class AMainActivity : AppCompatActivity() {
+class AMainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LearnComposeTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()){ innerPadding->
-//                    Test()
-//                    modifier = Modifier.padding(innerPadding)
-//                }
+                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                    Column(modifier = Modifier.padding(innerPadding)) {
+                        Test1()
+                        Test2()
+                        CoroutineTest()
+                        CoroutineTestBt()
+                        ShowText(num = 1)
+                        ShowText2(num = 1)
+                        showText3(num = 1)
+                        Weather()
+                        ShowText4()
+                        ShowText5()
+                        ShowText6()
+
+                    }
+                }
             }
         }
     }
