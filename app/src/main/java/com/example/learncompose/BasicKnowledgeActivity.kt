@@ -1,9 +1,14 @@
 package com.example.learncompose
 
+import android.Manifest
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,14 +23,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.learncompose.ui.theme.LearnComposeTheme
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -53,7 +66,8 @@ val topics = listOf(
     Topic("rememberCoroutineScope", "获取一个感知生命周期的协程作用域", "topic/rememberscope"),
     Topic("rememberUpdatedState", "在 Effect 中引用最新的值", "topic/rememberupdatedstate"),
     Topic("DisposableEffect", "需要清理资源的 Effect", "topic/disposableeffect"),
-    Topic("derivedStateOf", "将一个或多个状态对象转换为其他状态", "topic/derivedstateof")
+    Topic("derivedStateOf", "将一个或多个状态对象转换为其他状态", "topic/derivedstateof"),
+    Topic("camera", "相机业务", "topic/camera")
 )
 
 @Composable
@@ -70,6 +84,7 @@ fun AppNavigator() {
         composable("topic/rememberupdatedstate") { RememberUpdatedStateScreen() }
         composable("topic/disposableeffect") { DisposableEffectScreen() }
         composable("topic/derivedstateof") { DerivedStateOfScreen() }
+        composable("topic/camera") { CameraScreen() }
     }
 }
 
@@ -494,4 +509,69 @@ fun FilteredListExample() {
             Text(" - $it")
         }
     }
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun CameraScreen() {
+    TopicScreenScaffold(title = "相机集成 (CameraX)") {
+        val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+
+        if (cameraPermissionState.status.isGranted) {
+            ExplanationCard(
+                title = "权限已授予",
+                explanation = "你已经授予了相机权限，现在你可以看到下方的实时预览了。这是通过 CameraX 和 AndroidView 实现的。"
+            )
+            CameraPreview()
+        } else {
+            Column {
+                val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+                    "相机权限对显示预览至关重要。请授予权限。"
+                } else {
+                    "此功能需要相机权限，请点击下方按钮授予。"
+                }
+                ExplanationCard(title = "需要相机权限", explanation = textToShow)
+                Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+                    Text("申请权限")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CameraPreview() {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(context) }
+
+    AndroidView(
+        factory = {
+            val previewView = PreviewView(it)
+            val executor = ContextCompat.getMainExecutor(it)
+            cameraProviderFuture.addListener({
+                val cameraProvider = cameraProviderFuture.get()
+                val preview = Preview.Builder().build().also {
+                    it.setSurfaceProvider(previewView.surfaceProvider)
+                }
+
+                val cameraSelector = CameraSelector.Builder()
+                    .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+                    .build()
+
+                try {
+                    cameraProvider.unbindAll()
+                    cameraProvider.bindToLifecycle(
+                        lifecycleOwner,
+                        cameraSelector,
+                        preview
+                    )
+                } catch (exc: Exception) {
+                    Log.e("CameraPreview", "Use case binding failed", exc)
+                }
+            }, executor)
+            previewView
+        },
+        modifier = Modifier.fillMaxSize(),
+    )
 }
